@@ -162,16 +162,6 @@ public class MainActivity extends AppCompatActivity {
         //receive result after your activity finished scanning
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == SCAN_REQ_CODE) {
-            Barcode = data.getStringExtra("SCAN_RESULT");
-            Bundle bundle=new Bundle();
-            bundle.putString("Update",Barcode);
-            Intent i=new Intent(MainActivity.this, DisplayResult.class);
-            i.putExtras(bundle);
-            startActivity(i);
-            Log.d("demo", "onActivityResult: Scan successful. Scanned code is: " + Barcode);
-        }
-
         if (requestCode == REQUEST_CODE_SIGN_IN) {
             Log.i(TAG, "onActivitResult of sigInInIntent, request code: " + REQUEST_CODE_SIGN_IN);
             Task<AuthAccount> authAccountTask = AccountAuthManager.parseAuthResultFromIntent(data);
@@ -185,6 +175,18 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "sign in failed : " +((ApiException)authAccountTask.getException()).getStatusCode());
             }
         }
+
+        if (resultCode == RESULT_OK && requestCode == SCAN_REQ_CODE) {
+            Barcode = data.getStringExtra("SCAN_RESULT");
+            Bundle bundle=new Bundle();
+            bundle.putString("Update",Barcode);
+            Intent i=new Intent(MainActivity.this, DisplayResult.class);
+            i.putExtras(bundle);
+            startActivity(i);
+            Log.d("demo", "onActivityResult: Scan successful. Scanned code is: " + Barcode);
+        }
+
+
     }
 
 }
