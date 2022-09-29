@@ -28,11 +28,8 @@
 	"client":{
 		"cp_id":"10060000023616466",
 		"product_id":"99536292102607810",
-		"client_id":"979741379578056192",
-		"client_secret":"703F5D16445855D1EED56D4F0AD175D23DBFEB47C47FDF52EBD541CAFDCF6685",
 		"project_id":"99536292102607810",
 		"app_id":"107045405",
-		"api_key":"DAEDAPyytoeH3K1IQcNpUcA2TU4gpSMFR5gMWBPKKrxK1MEHB6AWoieObmXz7kaqZ9XXRB5CD70VxkMU+E9jootBkiEtv26x6KL2ag==",
 		"package_name":"com.example.avoassist"
 	},
 	"oauth_client":{

@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Define the log tag.
     private static final String TAG = "Account";
-    private Button scanButton;
+    private Button scanButton,signoutButton;
     private TextView resultText,dateTime;
     private final int PERMISSION_REQ_CODE = 111;
     private final int SCAN_REQ_CODE = 222;
@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
         String camera=getEmoji(unicode);
         scanButton.setText(scanButton.getText().toString()+" "+camera);
         resultText = findViewById(R.id.resultText);
+        signoutButton=findViewById(R.id.HuaweiIdSignOutButton);
+        signoutButton.setVisibility(View.INVISIBLE);
         try{
             scanButton.setOnClickListener(v -> {
                 // request for permissions
@@ -84,6 +86,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.HuaweiIdSignOutButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signOut();
+            }
+        });
+
     }
 
     public String getEmoji(int uni){
@@ -97,6 +106,26 @@ public class MainActivity extends AppCompatActivity {
         dateTime.setText(date);
         super.onResume();
     }
+
+    private void signOut() {
+        Task<Void> signOutTask = mAuthService.signOut();
+        signOutTask.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                signoutButton.setVisibility(View.INVISIBLE);
+                findViewById(R.id.HuaweiIdAuthButton).setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(),"Signed out successfully",Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "signOut Success");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                Log.i(TAG, "signOut fail");
+                Toast.makeText(getApplicationContext(),"Sign out failed",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -153,34 +182,44 @@ public class MainActivity extends AppCompatActivity {
      * @param authAccount AuthAccount object, which contains the HUAWEI ID information.
      */
     private void dealWithResultOfSignIn(AuthAccount authAccount) {
-        Log.i(TAG, "idToken:" + authAccount.getIdToken());
-        // TODO: After obtaining the ID token, your app will send it to your app server if there is one. If you have no app server, your app will verify and parse the ID token locally.
+        // Obtain the HUAWEI ID information.
+        Log.i(TAG, "display name:" + authAccount.getDisplayName());
+        Log.i(TAG, "photo uri string:" + authAccount.getAvatarUriString());
+        Log.i(TAG, "photo uri:" + authAccount.getAvatarUri());
+        Log.i(TAG, "email:" + authAccount.getEmail());
+        Log.i(TAG, "openid:" + authAccount.getOpenId());
+        Log.i(TAG, "unionid:" + authAccount.getUnionId());
+        // TODO: Implement service logic after the HUAWEI ID information is obtained.
+
     }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
         //receive result after your activity finished scanning
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == REQUEST_CODE_SIGN_IN) {
-            Log.i(TAG, "onActivitResult of sigInInIntent, request code: " + REQUEST_CODE_SIGN_IN);
             Task<AuthAccount> authAccountTask = AccountAuthManager.parseAuthResultFromIntent(data);
+            Log.i(TAG, "onActivitResult of sigInInIntent, request code: " + REQUEST_CODE_SIGN_IN);
             if (authAccountTask.isSuccessful()) {
                 // The sign-in is successful, and the authAccount object that contains the HUAWEI ID information is obtained.
                 AuthAccount authAccount = authAccountTask.getResult();
                 dealWithResultOfSignIn(authAccount);
+                findViewById(R.id.HuaweiIdAuthButton).setVisibility(View.INVISIBLE);
+                signoutButton.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(),"Hello "+authAccount.getDisplayName()+", you're now logged in!",Toast.LENGTH_LONG).show();
                 Log.i(TAG, "onActivitResult of sigInInIntent, request code: " + REQUEST_CODE_SIGN_IN);
             } else {
                 // The sign-in failed. Find the failure cause from the status code. For more information, please refer to Error Codes.
-                Log.e(TAG, "sign in failed : " +((ApiException)authAccountTask.getException()).getStatusCode());
+                Toast.makeText(getApplicationContext(),"Sign in failed",Toast.LENGTH_LONG).show();
+                Log.e(TAG, "sign in failed : " + ((ApiException) authAccountTask.getException()).getStatusCode());
             }
         }
 
         if (resultCode == RESULT_OK && requestCode == SCAN_REQ_CODE) {
             Barcode = data.getStringExtra("SCAN_RESULT");
-            Bundle bundle=new Bundle();
-            bundle.putString("Update",Barcode);
-            Intent i=new Intent(MainActivity.this, DisplayResult.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("Update", Barcode);
+            Intent i = new Intent(MainActivity.this, DisplayResult.class);
             i.putExtras(bundle);
             startActivity(i);
             Log.d("demo", "onActivityResult: Scan successful. Scanned code is: " + Barcode);

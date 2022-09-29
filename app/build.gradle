@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.avoassist"
-        minSdk 26
+        minSdk 25
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -16,11 +16,38 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+
+
+
+    signingConfigs {
+
+        debug{
+            storeFile file('C:/Users/Nicky/release_keystore.jks')
+            storePassword 'Nicavo6636'
+            keyAlias 'key0'
+            keyPassword 'Nicavo6636'
+
+        }
+
+        release{
+            storeFile file('C:/Users/Nicky/release_keystore.jks')
+            storePassword 'Nicavo6636'
+            keyAlias 'key0'
+            keyPassword 'Nicavo6636'
+
+        }
+    }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
