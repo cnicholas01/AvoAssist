@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 dealWithResultOfSignIn(authAccount);
                 findViewById(R.id.HuaweiIdAuthButton).setVisibility(View.INVISIBLE);
                 signoutButton.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(),"Hello "+authAccount.getDisplayName()+", you're now logged in!",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Hello "+authAccount.getDisplayName()+", you're now signed in!",Toast.LENGTH_LONG).show();
                 Log.i(TAG, "onActivitResult of sigInInIntent, request code: " + REQUEST_CODE_SIGN_IN);
             } else {
                 // The sign-in failed. Find the failure cause from the status code. For more information, please refer to Error Codes.
